@@ -1,0 +1,521 @@
+<html>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<style>
+.container-fluid {
+    margin: 0 auto;
+    height: 100%;
+    padding: 20px 0;
+	
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+	}
+</style>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://dimplejs.org/dist/dimple.v2.1.6.min.js"></script>
+<script type="text/javascript">
+var gRadioValue;
+
+// Hash for fetching the Country names corresponding to 2 letter codes
+var isoCountries = {
+				'AF' : 'Afghanistan',
+				'AX' : 'Aland Islands',
+				'AL' : 'Albania',
+				'DZ' : 'Algeria',
+				'AS' : 'American Samoa',
+				'AD' : 'Andorra',
+				'AO' : 'Angola',
+				'AI' : 'Anguilla',
+				'AQ' : 'Antarctica',
+				'AG' : 'Antigua And Barbuda',
+				'AR' : 'Argentina',
+				'AM' : 'Armenia',
+				'AW' : 'Aruba',
+				'AU' : 'Australia',
+				'AT' : 'Austria',
+				'AZ' : 'Azerbaijan',
+				'BS' : 'Bahamas',
+				'BH' : 'Bahrain',
+				'BD' : 'Bangladesh',
+				'BB' : 'Barbados',
+				'BY' : 'Belarus',
+				'BE' : 'Belgium',
+				'BZ' : 'Belize',
+				'BJ' : 'Benin',
+				'BM' : 'Bermuda',
+				'BT' : 'Bhutan',
+				'BO' : 'Bolivia',
+				'BA' : 'Bosnia And Herzegovina',
+				'BW' : 'Botswana',
+				'BV' : 'Bouvet Island',
+				'BR' : 'Brazil',
+				'IO' : 'British Indian Ocean Territory',
+				'BN' : 'Brunei Darussalam',
+				'BG' : 'Bulgaria',
+				'BF' : 'Burkina Faso',
+				'BI' : 'Burundi',
+				'KH' : 'Cambodia',
+				'CM' : 'Cameroon',
+				'CA' : 'Canada',
+				'CV' : 'Cape Verde',
+				'KY' : 'Cayman Islands',
+				'CF' : 'Central African Republic',
+				'TD' : 'Chad',
+				'CL' : 'Chile',
+				'CN' : 'China',
+				'CX' : 'Christmas Island',
+				'CC' : 'Cocos (Keeling) Islands',
+				'CO' : 'Colombia',
+				'KM' : 'Comoros',
+				'CG' : 'Congo',
+				'CD' : 'Congo, Democratic Republic',
+				'CK' : 'Cook Islands',
+				'CR' : 'Costa Rica',
+				'CI' : 'Cote D\'Ivoire',
+				'HR' : 'Croatia',
+				'CU' : 'Cuba',
+				'CY' : 'Cyprus',
+				'CZ' : 'Czech Republic',
+				'DK' : 'Denmark',
+				'DJ' : 'Djibouti',
+				'DM' : 'Dominica',
+				'DO' : 'Dominican Republic',
+				'EC' : 'Ecuador',
+				'EG' : 'Egypt',
+				'SV' : 'El Salvador',
+				'GQ' : 'Equatorial Guinea',
+				'ER' : 'Eritrea',
+				'EE' : 'Estonia',
+				'ET' : 'Ethiopia',
+				'FK' : 'Falkland Islands (Malvinas)',
+				'FO' : 'Faroe Islands',
+				'FJ' : 'Fiji',
+				'FI' : 'Finland',
+				'FR' : 'France',
+				'GF' : 'French Guiana',
+				'PF' : 'French Polynesia',
+				'TF' : 'French Southern Territories',
+				'GA' : 'Gabon',
+				'GM' : 'Gambia',
+				'GE' : 'Georgia',
+				'DE' : 'Germany',
+				'GH' : 'Ghana',
+				'GI' : 'Gibraltar',
+				'GR' : 'Greece',
+				'GL' : 'Greenland',
+				'GD' : 'Grenada',
+				'GP' : 'Guadeloupe',
+				'GU' : 'Guam',
+				'GT' : 'Guatemala',
+				'GG' : 'Guernsey',
+				'GN' : 'Guinea',
+				'GW' : 'Guinea-Bissau',
+				'GY' : 'Guyana',
+				'HT' : 'Haiti',
+				'HM' : 'Heard Island & Mcdonald Islands',
+				'VA' : 'Holy See (Vatican City State)',
+				'HN' : 'Honduras',
+				'HK' : 'Hong Kong',
+				'HU' : 'Hungary',
+				'IS' : 'Iceland',
+				'IN' : 'India',
+				'ID' : 'Indonesia',
+				'IR' : 'Iran, Islamic Republic Of',
+				'IQ' : 'Iraq',
+				'IE' : 'Ireland',
+				'IM' : 'Isle Of Man',
+				'IL' : 'Israel',
+				'IT' : 'Italy',
+				'JM' : 'Jamaica',
+				'JP' : 'Japan',
+				'JE' : 'Jersey',
+				'JO' : 'Jordan',
+				'KZ' : 'Kazakhstan',
+				'KE' : 'Kenya',
+				'KI' : 'Kiribati',
+				'KR' : 'Korea',
+				'KW' : 'Kuwait',
+				'KG' : 'Kyrgyzstan',
+				'LA' : 'Lao People\'s Democratic Republic',
+				'LV' : 'Latvia',
+				'LB' : 'Lebanon',
+				'LS' : 'Lesotho',
+				'LR' : 'Liberia',
+				'LY' : 'Libyan Arab Jamahiriya',
+				'LI' : 'Liechtenstein',
+				'LT' : 'Lithuania',
+				'LU' : 'Luxembourg',
+				'MO' : 'Macao',
+				'MK' : 'Macedonia',
+				'MG' : 'Madagascar',
+				'MW' : 'Malawi',
+				'MY' : 'Malaysia',
+				'MV' : 'Maldives',
+				'ML' : 'Mali',
+				'MT' : 'Malta',
+				'MH' : 'Marshall Islands',
+				'MQ' : 'Martinique',
+				'MR' : 'Mauritania',
+				'MU' : 'Mauritius',
+				'YT' : 'Mayotte',
+				'MX' : 'Mexico',
+				'FM' : 'Micronesia, Federated States Of',
+				'MD' : 'Moldova',
+				'MC' : 'Monaco',
+				'MN' : 'Mongolia',
+				'ME' : 'Montenegro',
+				'MS' : 'Montserrat',
+				'MA' : 'Morocco',
+				'MZ' : 'Mozambique',
+				'MM' : 'Myanmar',
+				'NA' : 'Namibia',
+				'NR' : 'Nauru',
+				'NP' : 'Nepal',
+				'NL' : 'Netherlands',
+				'AN' : 'Netherlands Antilles',
+				'NC' : 'New Caledonia',
+				'NZ' : 'New Zealand',
+				'NI' : 'Nicaragua',
+				'NE' : 'Niger',
+				'NG' : 'Nigeria',
+				'NU' : 'Niue',
+				'NF' : 'Norfolk Island',
+				'MP' : 'Northern Mariana Islands',
+				'NO' : 'Norway',
+				'OM' : 'Oman',
+				'PK' : 'Pakistan',
+				'PW' : 'Palau',
+				'PS' : 'Palestinian Territory, Occupied',
+				'PA' : 'Panama',
+				'PG' : 'Papua New Guinea',
+				'PY' : 'Paraguay',
+				'PE' : 'Peru',
+				'PH' : 'Philippines',
+				'PN' : 'Pitcairn',
+				'PL' : 'Poland',
+				'PT' : 'Portugal',
+				'PR' : 'Puerto Rico',
+				'QA' : 'Qatar',
+				'RE' : 'Reunion',
+				'RO' : 'Romania',
+				'RU' : 'Russian Federation',
+				'RW' : 'Rwanda',
+				'BL' : 'Saint Barthelemy',
+				'SH' : 'Saint Helena',
+				'KN' : 'Saint Kitts And Nevis',
+				'LC' : 'Saint Lucia',
+				'MF' : 'Saint Martin',
+				'PM' : 'Saint Pierre And Miquelon',
+				'VC' : 'Saint Vincent And Grenadines',
+				'WS' : 'Samoa',
+				'SM' : 'San Marino',
+				'ST' : 'Sao Tome And Principe',
+				'SA' : 'Saudi Arabia',
+				'SN' : 'Senegal',
+				'RS' : 'Serbia',
+				'SC' : 'Seychelles',
+				'SL' : 'Sierra Leone',
+				'SG' : 'Singapore',
+				'SK' : 'Slovakia',
+				'SI' : 'Slovenia',
+				'SB' : 'Solomon Islands',
+				'SO' : 'Somalia',
+				'ZA' : 'South Africa',
+				'GS' : 'South Georgia And Sandwich Isl.',
+				'ES' : 'Spain',
+				'LK' : 'Sri Lanka',
+				'SD' : 'Sudan',
+				'SR' : 'Suriname',
+				'SJ' : 'Svalbard And Jan Mayen',
+				'SZ' : 'Swaziland',
+				'SE' : 'Sweden',
+				'CH' : 'Switzerland',
+				'SY' : 'Syrian Arab Republic',
+				'TW' : 'Taiwan',
+				'TJ' : 'Tajikistan',
+				'TZ' : 'Tanzania',
+				'TH' : 'Thailand',
+				'TL' : 'Timor-Leste',
+				'TG' : 'Togo',
+				'TK' : 'Tokelau',
+				'TO' : 'Tonga',
+				'TT' : 'Trinidad And Tobago',
+				'TN' : 'Tunisia',
+				'TR' : 'Turkey',
+				'TM' : 'Turkmenistan',
+				'TC' : 'Turks And Caicos Islands',
+				'TV' : 'Tuvalu',
+				'UG' : 'Uganda',
+				'UA' : 'Ukraine',
+				'AE' : 'United Arab Emirates',
+				'GB' : 'United Kingdom',
+				'US' : 'United States',
+				'UM' : 'United States Outlying Islands',
+				'UY' : 'Uruguay',
+				'UZ' : 'Uzbekistan',
+				'VU' : 'Vanuatu',
+				'VE' : 'Venezuela',
+				'VN' : 'Viet Nam',
+				'VG' : 'Virgin Islands, British',
+				'VI' : 'Virgin Islands, U.S.',
+				'WF' : 'Wallis And Futuna',
+				'EH' : 'Western Sahara',
+				'YE' : 'Yemen',
+				'ZM' : 'Zambia',
+				'ZW' : 'Zimbabwe'
+  };
+
+  // function to get Country Name corresponding to country codes 	
+  function getCountryName (countryCode)
+  {
+				if (isoCountries.hasOwnProperty(countryCode)) 
+				{
+					return isoCountries[countryCode];
+				} 
+				else 
+				{
+					return countryCode;
+				}
+  }
+
+  // function to display Stacked Chart for Good and Bad response to products country wise 
+  function CreateCharts(product) 
+  {		
+				
+				var chartData=[];
+				var dataset = [];
+				var otherProds;  
+				var offers;	
+				
+				if(product=="" || product==undefined)
+				{
+					 alert("Please Select the Product");
+				}
+				else
+				{
+					 // d3 code to read CSV file
+					 d3.csv(product+".csv", function(data) {
+					  
+					  dataset = data.map(function(d) { return [ d["Country"], d["Good"], d["Bad"]]; });
+					  chartData=CreateMapEmotions(dataset);
+					});
+					if (!confirm("Loading data. Press Ok to check data for "+product))
+					return false;					
+					document.write('<div id="chartContainer">');
+					document.write('<div align="center"><strong><u>'+'Country-wise Analysis of Tweets '); 
+					document.write("</u></strong></div><br>");
+					var svg = dimple.newSvg("#chartContainer", 590, 400);
+					var myChart = new dimple.chart(svg, chartData);
+					myChart.setBounds(60, 30, 510, 305)
+					var x = myChart.addCategoryAxis("x", "Country");
+					myChart.addMeasureAxis("y", "PercentageTweets");
+					var s=myChart.addSeries("Emotion", dimple.plot.bar);
+					s.addOrderRule("Emotion");
+					myChart.addLegend(60, 10, 510, 20, "right");
+					myChart.assignColor("Good","#98abc5");
+					myChart.assignColor("Bad","#6b486b");
+					myChart.draw();
+
+					otherProds=CreateComparedProds(dataset);
+					offers=CreateComparedOffer(dataset);
+
+					//For compared prods
+					document.write('<div id="prods">');
+					document.write('<div><u>'+'List of Products Compared with '+product+':');
+					document.write("</u></div>");
+					document.write('<div">');
+					document.write('<p>');
+					document.write("<ul>");
+				
+					for (var idx = 0; idx < otherProds.length; idx++) 
+					{   
+						if(otherProds[idx]!="")
+						document.write("<li>"+otherProds[idx]+"</li>");
+					}
+					document.write("</ul>"); 
+					document.write('</p>');
+					document.write('</div>');
+
+					document.write('</div>'); // End of Div Compared Products
+					
+					// For Best Deals 
+
+					document.write('<div id="offers">');
+					document.write('<div> <u>'+'List of Best Deals for '+product+':');
+					document.write("</u></div>");
+					document.write('<div>');
+					document.write('<p>');
+					document.write("<ul>");
+					var offersLink;
+					for (var idx = 0; idx < offers.length; idx++) 
+					{   
+						if(offers[idx]!="")
+						{
+						offersLink=offers[idx].split("::");
+						document.write("<li>"+offersLink[0]);
+						document.write(" @ $ <b>"+ offersLink[1]+";</b>");
+						document.write(" Check out more at "+ offersLink[2]+"</li>");
+						}
+					}
+					document.write("</ul>"); 
+					document.write('</p>');
+					document.write('</div>');
+
+					document.write('</div>'); // End of Div Offers
+					document.write('</div>'); // End of chartContainer
+			
+				}
+   }
+   
+   // function to handle visibility of products list on selection of dropdown     
+   function handleVis()
+   {              
+				
+				var e = document.getElementById("type");
+				var valueType = e.options[e.selectedIndex].value;
+				if(valueType=="Laptops")
+				{
+					document.getElementById("laptop").style.display="block";
+					document.getElementById("laptop").value="";
+					document.getElementById("phones").style.display="none";
+				}
+				else if(valueType=="Phones")
+				{
+					document.getElementById("laptop").style.display="none";
+					document.getElementById("phones").value="";
+					document.getElementById("phones").style.display="block";
+				}
+				else
+				{
+					document.getElementById("laptop").style.display="none";
+					document.getElementById("phones").style.display="none";
+				}
+
+    }
+    
+	// function to return the hash of good and bad tweet counts corresponding to each country      
+	function CreateMapEmotions(dataset) 
+	{			 
+			  var arr = [];
+			  var commaSeparatedVal;	
+			  var fields;
+			  var country;
+			  var good_tweets;	
+			  var bad_tweets;	
+			  var innerArray=[];
+			  for (var i=0,k=0;i<dataset.length;i=i+1) 
+			  {
+				  commaSeparatedVal=dataset[i];
+				  fields = (""+commaSeparatedVal).split(",");
+				  country = fields[0];				  
+				 		  
+					if(country!='Offers' && country!='Products') 
+					{
+						good_tweets = parseInt(fields[1]);	
+						bad_tweets = parseInt(fields[2]);	
+						var hgood = new Object(); 
+						hgood["Country"] = getCountryName(country);
+						hgood["PercentageTweets"] = ((good_tweets*100)/(good_tweets+bad_tweets)).toFixed(2);
+						hgood["Emotion"] = "Good";
+						arr[k]=hgood;
+						
+										
+						var hbad = new Object(); 
+						hbad["Country"] = getCountryName(country);
+						hbad["PercentageTweets"] = ((bad_tweets*100)/(good_tweets+bad_tweets)).toFixed(2);
+						hbad["Emotion"] = "Bad";
+						arr[k+1]=hbad;
+						k=k+2;
+					}
+			  }	
+				
+			  return arr;
+	}
+
+	// function to return the array of products compared with product for which tweets are collected
+	function CreateComparedProds(dataset)
+	{				
+			  var fields;
+			  var prods;
+			  for (var i=0;i<dataset.length;i=i+1) 
+			  {
+					commaSeparatedVal=dataset[i];
+					fields = (""+commaSeparatedVal).split(",");
+					if(fields[0]=='Products') 
+					{
+						prods=(""+fields[1]).split("~");
+						return prods;
+					}				 
+			  }	
+			 
+	}
+
+	// function to return the array of best deals for the product for which tweets are collected
+	function CreateComparedOffer(dataset)
+	{				
+			 var fields;
+			 var deals;
+			 for (var i=0,k=0;i<dataset.length;i=i+1,k=k+3) 
+			 {
+				  commaSeparatedVal=dataset[i];
+				  fields = (""+commaSeparatedVal).split(",");
+				  if(fields[0]=='Offers') 
+				  {
+						deals=(""+fields[1]).split("~");
+						return deals;
+				  }
+			 }	
+	}
+
+	// function to reset the selected value of product onload
+	function resetSelected()
+	{
+			document.getElementById("type").selectedIndex = 0;
+			document.getElementById("lName").checked = false;
+			document.getElementById("pName").checked = false;
+	}
+	
+</script>
+<body onload="resetSelected()">
+<form>
+<div class="jumbotron specialjum" align="center">
+<div class="container-fluid" width="100%" height="100%">
+
+<h3><strong><font color="#000059"> Welcome to Public Opinion Analysis Application</font><strong></h3>
+<h4><strong><font color="#000059"> using Twitter data</font><strong></h4>
+<img src="index.png" class="img-circle"  style="margin-left:70px;" alt="Twitter" width="200" height="130" align="center"> 
+<br>
+
+<h3><span class="label"><font color="black"><em>Please Select the Product:</em> </font> </span>
+
+<b>
+<select  style="font-size:15px" id="type" onchange="handleVis();">
+  <option value="0">------- Select -------</option>
+  <option value="Laptops">Laptops</option>
+  <option value="Phones">Mobiles</option>
+</select>
+</b>
+</h3>
+
+<h4>
+<div style="display:none" class="radio" id="laptop">
+<label><input type="radio" id="lName" value="macbook" name="optradio" onclick="gRadioValue=this.value;">macbook</label>
+<br>
+</div>
+<div style="display:none" class="radio" id="phones">
+<label><input type="radio"  id="pName" value="iphone" name="optradio" onclick="gRadioValue=this.value;">iPhone</label>
+</div>
+</h4>
+<br>
+<h4><span class="label"  style="margin-left:75px;"><font color="black"><em>For viewing analysis of other products please email us at twitter.analysis1211@gmail.com </em> </font> </span></h4>
+
+<br>
+<a class="btn btn-primary btn-lg" href="#" align="center" style="margin-left:45px;" role="button" onclick="CreateCharts(gRadioValue)">Users Opinion?</a>
+
+</div> <!--jumbotron End -->
+</div> <!--container End -->
+
+</form>
+</body>
+</html>
